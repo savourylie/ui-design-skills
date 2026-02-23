@@ -1,0 +1,23 @@
+{
+  "name": "claude-skills",
+  "owner": {
+    "name": "Calvin Ku"
+  },
+  "metadata": {
+    "description": "Design system skills for extracting and applying design tokens across web and mobile platforms",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "design-system-skills",
+      "description": "Extract design systems from UI screenshots and generate theme files for web (CSS/SCSS/Tailwind/React/Vue) and mobile (iOS/Android/Flutter/React Native) platforms.",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/design-system-extractor",
+        "./skills/design-system-web-applier",
+        "./skills/design-system-mobile-applier"
+      ]
+    }
+  ]
+}
