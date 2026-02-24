@@ -25,8 +25,8 @@ All three skills share a common [token schema](#token-schema), so the extractor'
 ### Claude Code
 
 ```
-/plugin marketplace add savourylie/claude-skills
-/plugin install design-system-skills@claude-skills
+/plugin marketplace add savourylie/ui-design-skills
+/plugin install design-system-skills@ui-design-skills
 ```
 
 ### Codex CLI
@@ -34,9 +34,9 @@ All three skills share a common [token schema](#token-schema), so the extractor'
 Install skills directly from GitHub using `$skill-installer` inside Codex (no cloning required):
 
 ```
-$skill-installer install https://github.com/savourylie/claude-skills/tree/main/skills/design-system-extractor
-$skill-installer install https://github.com/savourylie/claude-skills/tree/main/skills/design-system-web-applier
-$skill-installer install https://github.com/savourylie/claude-skills/tree/main/skills/design-system-mobile-applier
+$skill-installer install https://github.com/savourylie/ui-design-skills/tree/main/skills/design-system-extractor
+$skill-installer install https://github.com/savourylie/ui-design-skills/tree/main/skills/design-system-web-applier
+$skill-installer install https://github.com/savourylie/ui-design-skills/tree/main/skills/design-system-mobile-applier
 ```
 
 Restart Codex after installing to pick up the new skills.
@@ -44,9 +44,9 @@ Restart Codex after installing to pick up the new skills.
 Alternatively, clone this repo into your project or add it as a submodule — skills are discovered automatically from `.agents/skills/`:
 
 ```bash
-git clone https://github.com/savourylie/claude-skills.git .claude-skills
+git clone https://github.com/savourylie/ui-design-skills.git .ui-design-skills
 # or
-git submodule add https://github.com/savourylie/claude-skills.git .claude-skills
+git submodule add https://github.com/savourylie/ui-design-skills.git .ui-design-skills
 ```
 
 ### Antigravity
@@ -55,8 +55,8 @@ Install skills directly from GitHub (no cloning required):
 
 ```bash
 # Download skills and set up Antigravity discovery
-curl -sL https://github.com/savourylie/claude-skills/archive/refs/heads/main.tar.gz \
-  | tar xz --strip-components=1 -C /tmp claude-skills-main/skills
+curl -sL https://github.com/savourylie/ui-design-skills/archive/refs/heads/main.tar.gz \
+  | tar xz --strip-components=1 -C /tmp ui-design-skills-main/skills
 mkdir -p .agent/skills
 for s in design-system-extractor design-system-web-applier design-system-mobile-applier; do
   cp -r /tmp/skills/$s .agent/skills/
@@ -67,8 +67,8 @@ rm -rf /tmp/skills
 Or for global installation (available across all projects):
 
 ```bash
-curl -sL https://github.com/savourylie/claude-skills/archive/refs/heads/main.tar.gz \
-  | tar xz --strip-components=1 -C /tmp claude-skills-main/skills
+curl -sL https://github.com/savourylie/ui-design-skills/archive/refs/heads/main.tar.gz \
+  | tar xz --strip-components=1 -C /tmp ui-design-skills-main/skills
 mkdir -p ~/.gemini/antigravity/skills
 for s in design-system-extractor design-system-web-applier design-system-mobile-applier; do
   cp -r /tmp/skills/$s ~/.gemini/antigravity/skills/
@@ -79,7 +79,7 @@ rm -rf /tmp/skills
 Alternatively, clone the full repo into your workspace:
 
 ```bash
-git clone https://github.com/savourylie/claude-skills.git .claude-skills
+git clone https://github.com/savourylie/ui-design-skills.git .ui-design-skills
 ```
 
 ## Usage / Workflow
@@ -117,7 +117,7 @@ Pass the token JSON to the **web applier** or **mobile applier**. The skill auto
 ## Project Structure
 
 ```
-claude-skills/
+ui-design-skills/
 ├── .claude/
 │   └── settings.local.json              # Claude Code settings
 ├── .claude-plugin/
