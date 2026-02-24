@@ -1,10 +1,10 @@
-# claude-skills
+# design-system-skills
 
-A plugin marketplace for Claude Code that extracts design systems from UI screenshots and generates platform-native theme files for web and mobile.
+Multi-platform agent skills that extract design systems from UI screenshots and generate platform-native theme files for web and mobile. Works with [Claude Code](https://docs.anthropic.com/en/docs/claude-code/skills), [Codex CLI](https://github.com/openai/codex), and [Antigravity](https://github.com/ArcadeLabsInc/antigravity) via the open [Agent Skills](https://agentskills.io) standard.
 
 ## Overview
 
-This repository provides three Claude Code skills that form a complete **extract → review → apply** workflow for design systems:
+This repository provides three agent skills that form a complete **extract → review → apply** workflow for design systems:
 
 1. **Extract** design tokens (colors, typography, spacing, shadows) from one or more UI screenshots
 2. **Review** the generated token JSON — a structured, platform-agnostic artifact
@@ -22,9 +22,64 @@ All three skills share a common [token schema](#token-schema), so the extractor'
 
 ## Installation
 
+### Claude Code
+
 ```
 /plugin marketplace add savourylie/claude-skills
 /plugin install design-system-skills@claude-skills
+```
+
+### Codex CLI
+
+Install skills directly from GitHub using `$skill-installer` inside Codex (no cloning required):
+
+```
+$skill-installer install https://github.com/savourylie/claude-skills/tree/main/skills/design-system-extractor
+$skill-installer install https://github.com/savourylie/claude-skills/tree/main/skills/design-system-web-applier
+$skill-installer install https://github.com/savourylie/claude-skills/tree/main/skills/design-system-mobile-applier
+```
+
+Restart Codex after installing to pick up the new skills.
+
+Alternatively, clone this repo into your project or add it as a submodule — skills are discovered automatically from `.agents/skills/`:
+
+```bash
+git clone https://github.com/savourylie/claude-skills.git .claude-skills
+# or
+git submodule add https://github.com/savourylie/claude-skills.git .claude-skills
+```
+
+### Antigravity
+
+Install skills directly from GitHub (no cloning required):
+
+```bash
+# Download skills and set up Antigravity discovery
+curl -sL https://github.com/savourylie/claude-skills/archive/refs/heads/main.tar.gz \
+  | tar xz --strip-components=1 -C /tmp claude-skills-main/skills
+mkdir -p .agent/skills
+for s in design-system-extractor design-system-web-applier design-system-mobile-applier; do
+  cp -r /tmp/skills/$s .agent/skills/
+done
+rm -rf /tmp/skills
+```
+
+Or for global installation (available across all projects):
+
+```bash
+curl -sL https://github.com/savourylie/claude-skills/archive/refs/heads/main.tar.gz \
+  | tar xz --strip-components=1 -C /tmp claude-skills-main/skills
+mkdir -p ~/.gemini/antigravity/skills
+for s in design-system-extractor design-system-web-applier design-system-mobile-applier; do
+  cp -r /tmp/skills/$s ~/.gemini/antigravity/skills/
+done
+rm -rf /tmp/skills
+```
+
+Alternatively, clone the full repo into your workspace:
+
+```bash
+git clone https://github.com/savourylie/claude-skills.git .claude-skills
 ```
 
 ## Usage / Workflow
@@ -63,39 +118,36 @@ Pass the token JSON to the **web applier** or **mobile applier**. The skill auto
 
 ```
 claude-skills/
+├── .claude/
+│   └── settings.local.json              # Claude Code settings
+├── .claude-plugin/
+│   └── marketplace.json                 # Claude Code plugin registry
+├── .agents/
+│   └── skills/                          # Codex CLI discovery (symlinks)
+│       ├── design-system-extractor      -> ../../skills/design-system-extractor
+│       ├── design-system-web-applier    -> ../../skills/design-system-web-applier
+│       └── design-system-mobile-applier -> ../../skills/design-system-mobile-applier
+├── .agent/
+│   └── skills/                          # Antigravity discovery (symlinks)
+│       ├── design-system-extractor      -> ../../skills/design-system-extractor
+│       ├── design-system-web-applier    -> ../../skills/design-system-web-applier
+│       └── design-system-mobile-applier -> ../../skills/design-system-mobile-applier
+├── catalog.json                         # Antigravity skill catalog
+├── skills/                              # Canonical skill definitions
+│   ├── design-system-extractor/
+│   │   ├── SKILL.md
+│   │   ├── scripts/
+│   │   └── references/
+│   ├── design-system-web-applier/
+│   │   ├── SKILL.md
+│   │   ├── scripts/
+│   │   └── references/
+│   └── design-system-mobile-applier/
+│       ├── SKILL.md
+│       ├── scripts/
+│       └── references/
 ├── README.md
-├── LICENSE
-└── skills/
-    ├── design-system-extractor/
-    │   ├── SKILL.md              # Skill definition and workflow
-    │   ├── scripts/
-    │   │   └── validate_tokens.py
-    │   └── references/
-    │       ├── token-schema.md   # Shared token JSON schema
-    │       ├── extraction-guide.md
-    │       └── example-output.md
-    ├── design-system-web-applier/
-    │   ├── SKILL.md
-    │   ├── scripts/
-    │   │   └── generate_css.py
-    │   └── references/
-    │       ├── token-schema.md
-    │       ├── css-variables.md
-    │       ├── tailwind-config.md
-    │       └── react-theme.md
-    └── design-system-mobile-applier/
-        ├── SKILL.md
-        ├── scripts/
-        │   ├── generate_swift.py
-        │   └── generate_kotlin.py
-        └── references/
-            ├── token-schema.md
-            ├── ios-swiftui.md
-            ├── ios-uikit.md
-            ├── android-compose.md
-            ├── android-xml.md
-            ├── flutter.md
-            └── react-native.md
+└── LICENSE
 ```
 
 ## Token Schema
@@ -137,8 +189,11 @@ See [`skills/design-system-extractor/references/token-schema.md`](skills/design-
 
 ## Links
 
-- [Agent Skills Spec](https://docs.anthropic.com/en/docs/claude-code/skills)
-- [Plugin Marketplace](https://docs.anthropic.com/en/docs/claude-code/plugins)
+- [Agent Skills Standard](https://agentskills.io)
+- [Claude Code Skills](https://docs.anthropic.com/en/docs/claude-code/skills)
+- [Claude Code Plugin Marketplace](https://docs.anthropic.com/en/docs/claude-code/plugins)
+- [Codex CLI](https://github.com/openai/codex)
+- [Antigravity](https://github.com/ArcadeLabsInc/antigravity)
 
 ## License
 
