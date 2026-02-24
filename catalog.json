@@ -1,0 +1,23 @@
+{
+  "name": "design-system-skills",
+  "version": "1.0.0",
+  "description": "Extract design systems from UI screenshots and generate theme files for web and mobile platforms.",
+  "author": "Calvin Ku",
+  "skills": [
+    {
+      "name": "design-system-extractor",
+      "path": ".agent/skills/design-system-extractor",
+      "description": "Extract structured design tokens from UI screenshots"
+    },
+    {
+      "name": "design-system-web-applier",
+      "path": ".agent/skills/design-system-web-applier",
+      "description": "Generate web theme files from design token JSON"
+    },
+    {
+      "name": "design-system-mobile-applier",
+      "path": ".agent/skills/design-system-mobile-applier",
+      "description": "Generate mobile theme files from design token JSON"
+    }
+  ]
+}
