@@ -94,12 +94,22 @@ Organized into sub-groups:
       "tight":   { "value": "-0.025em", "type": "dimension" },
       "normal":  { "value": "0", "type": "dimension" },
       "wide":    { "value": "0.05em", "type": "dimension" }
+    },
+    "font-source": {
+      "heading": { "value": "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap", "type": "fontSource" },
+      "body":    { "value": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap", "type": "fontSource" },
+      "mono":    { "value": "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap", "type": "fontSource" }
     }
   }
 }
 ```
 
 Only include font-size values that are actually observed. The scale above is illustrative — use the values extracted from the screenshot.
+
+**Font source rules:**
+- Construct Google Fonts URLs from the identified font name and the extracted weight values (include `&display=swap` for performance)
+- If the font is a system font (SF Pro, Helvetica Neue, Arial, Helvetica, Georgia, system-ui), set the value to `"system"` — no import is needed
+- The `font-source` keys (`heading`, `body`, `mono`) correspond to the `font-family-heading`, `font-family-body`, and `font-family-mono` tokens
 
 ### spacing (required)
 
@@ -189,6 +199,7 @@ Reference primitive tokens using `{token.path}` syntax:
 - **Shadows**: CSS shadow syntax with `rgba()` for opacity
 - **Font families**: quoted family name with generic fallback
 - **Font weights**: numeric values (400, 500, 600, 700)
+- **Font sources**: valid URL string (e.g., Google Fonts URL) or the literal `"system"` for system fonts
 - **Line heights**: unitless ratios
 - **Letter spacing**: `em` units
 - **Component references**: `{section.token-name}` syntax

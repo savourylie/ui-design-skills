@@ -47,6 +47,9 @@ Token paths map to CSS variable names as follows:
  * Format: CSS Custom Properties
  */
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
 :root {
   /* Colors */
   --color-primary: #2563EB;
@@ -97,6 +100,9 @@ Token paths map to CSS variable names as follows:
 SCSS uses `$variable` syntax instead of `--variable`, plus generates maps per section:
 
 ```scss
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
 // Colors
 $color-primary: #2563EB;
 $color-primary-light: #60A5FA;

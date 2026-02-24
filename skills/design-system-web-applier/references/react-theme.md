@@ -524,6 +524,67 @@ Generate a CSS file with component classes using `var()` references, then import
 
 Use `generate_css.py --components` to auto-generate these classes from the token JSON.
 
+## Font Loading
+
+All framework variants need to load the actual font files. The `typography.font-source` tokens provide the URLs. Skip any entry with value `"system"`.
+
+### styled-components / Emotion
+
+Add font imports to your global styles using `createGlobalStyle`:
+
+```ts
+import { createGlobalStyle } from 'styled-components';
+
+const GlobalStyle = createGlobalStyle`
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+`;
+
+// Include <GlobalStyle /> at the top of your App alongside <ThemeProvider>
+```
+
+### Chakra UI
+
+Add font `<link>` tags in your HTML `<head>` or use `@fontsource` packages:
+
+```bash
+npm install @fontsource/inter @fontsource/jetbrains-mono
+```
+
+```ts
+// In your entry point (e.g., main.tsx)
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/inter/600.css';
+import '@fontsource/inter/700.css';
+import '@fontsource/jetbrains-mono/400.css';
+```
+
+### CSS Modules
+
+Import font URLs at the top of your `tokens.css` file (handled automatically by `generate_css.py`):
+
+```css
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --font-heading: 'Inter', sans-serif;
+  /* ... */
+}
+```
+
+### Vue 3
+
+Add font imports to your main CSS file or `App.vue`:
+
+```css
+/* src/assets/main.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+```
+
+Or use `<link>` tags in `index.html`.
+
 ## Key Conversion Rules (All Frameworks)
 
 - Convert `px` → `rem` (÷16) for all dimension values

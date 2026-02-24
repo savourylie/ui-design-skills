@@ -90,6 +90,30 @@ Infer approximate sizes by comparing text elements relative to each other and to
 - **Normal (1.4-1.6)**: body text, paragraphs
 - **Relaxed (1.7-1.8)**: long-form reading, documentation
 
+### Font source resolution
+
+After identifying each font family, determine the source URL so the applier can load the font:
+
+1. **Check if it's a system font** — these don't need imports:
+   - SF Pro, SF Mono, Helvetica Neue, Helvetica, Arial, Georgia, Times New Roman, Courier New, system-ui, -apple-system, BlinkMacSystemFont
+   - Set the `font-source` value to `"system"` for these
+
+2. **Construct a Google Fonts URL** for web fonts — most non-system fonts used on the web come from Google Fonts:
+   - Base URL: `https://fonts.googleapis.com/css2?family=`
+   - Replace spaces in the font name with `+` (e.g., `Plus Jakarta Sans` → `Plus+Jakarta+Sans`)
+   - Append only the weights that were actually extracted: `wght@400;500;600;700`
+   - Always include `&display=swap` for better loading performance
+   - Example: `https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap`
+
+3. **Common Google Fonts by category:**
+   - Geometric sans: Inter, Outfit, DM Sans, Nunito Sans, Poppins
+   - Humanist sans: Open Sans, Source Sans 3, Lato, Nunito
+   - Display/brand: Plus Jakarta Sans, Manrope, Satoshi, General Sans, Space Grotesk
+   - Monospace: JetBrains Mono, Fira Code, Source Code Pro, IBM Plex Mono, Roboto Mono
+   - Serif: Merriweather, Playfair Display, Lora, Libre Baskerville, IBM Plex Serif
+
+4. **If the font is not on Google Fonts** (e.g., Satoshi, General Sans from Fontshare), note the source and use the best available URL. When unsure, default to the Google Fonts URL pattern and annotate with a confidence marker.
+
 ## Spacing Extraction
 
 ### Inferring the base unit

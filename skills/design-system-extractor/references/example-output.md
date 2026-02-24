@@ -52,6 +52,9 @@ Generated: 2026-02-23
 | font.line-height.tight | 1.25 | Headings |
 | font.line-height.normal | 1.5 | Body text |
 | font.line-height.relaxed | 1.75 | Long descriptions |
+| font.source.heading | https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap | Font loading for headings |
+| font.source.body | https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap | Font loading for body |
+| font.source.mono | https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap | Font loading for code |
 
 ## Spacing Scale
 
@@ -158,6 +161,11 @@ Base unit: 4px
       "tight": { "value": "-0.025em", "type": "dimension" },
       "normal": { "value": "0", "type": "dimension" },
       "wide": { "value": "0.05em", "type": "dimension" }
+    },
+    "font-source": {
+      "heading": { "value": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap", "type": "fontSource" },
+      "body": { "value": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap", "type": "fontSource" },
+      "mono": { "value": "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap", "type": "fontSource" }
     }
   },
   "spacing": {
