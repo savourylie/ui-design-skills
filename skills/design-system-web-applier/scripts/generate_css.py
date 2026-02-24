@@ -39,7 +39,7 @@ TYPOGRAPHY_PREFIX = {
 }
 
 # Types whose values pass through without conversion
-PASSTHROUGH_TYPES = {"color", "fontFamily", "fontWeight", "number", "shadow"}
+PASSTHROUGH_TYPES = {"color", "fontFamily", "fontWeight", "fontSource", "number", "shadow"}
 
 PX_RE = re.compile(r"^(-?\d+(?:\.\d+)?)px$")
 
@@ -109,6 +109,20 @@ def generate_header(meta: dict, fmt: str) -> str:
     return "\n".join(lines)
 
 
+def collect_font_sources(data: dict) -> list[str]:
+    """Collect unique font source URLs from the typography.font-source group."""
+    urls = []
+    seen = set()
+    font_sources = data.get("typography", {}).get("font-source", {})
+    for _key, token in font_sources.items():
+        if isinstance(token, dict) and "value" in token:
+            url = token["value"]
+            if url != "system" and url not in seen:
+                urls.append(url)
+                seen.add(url)
+    return urls
+
+
 def collect_tokens(data: dict) -> list[tuple[str, str, str, str]]:
     """Collect (css_var_name, scss_var_name, value, section) tuples from token data."""
     tokens = []
@@ -121,6 +135,9 @@ def collect_tokens(data: dict) -> list[tuple[str, str, str, str]]:
 
         if section == "typography":
             for key, val in section_data.items():
+                # Skip font-source — handled separately as @import declarations
+                if key == "font-source":
+                    continue
                 if isinstance(val, dict) and "value" in val and "type" in val:
                     # Top-level typography token (font-family-*)
                     css_name = build_css_variable_name(section, key)
@@ -155,12 +172,28 @@ SECTION_LABELS = {
 }
 
 
+def generate_font_imports(data: dict) -> str:
+    """Generate @import declarations for font sources."""
+    urls = collect_font_sources(data)
+    if not urls:
+        return ""
+    lines = []
+    for url in urls:
+        lines.append(f"@import url('{url}');")
+    return "\n".join(lines)
+
+
 def generate_css(data: dict) -> str:
     """Generate CSS custom properties output."""
     tokens = collect_tokens(data)
     header = generate_header(data.get("meta", {}), "css")
 
-    lines = [header, "", ":root {"]
+    font_imports = generate_font_imports(data)
+    lines = [header, ""]
+    if font_imports:
+        lines.append(font_imports)
+        lines.append("")
+    lines.append(":root {")
     current_section = None
     for css_name, _, value, section in tokens:
         if section != current_section:
@@ -179,7 +212,11 @@ def generate_scss(data: dict) -> str:
     tokens = collect_tokens(data)
     header = generate_header(data.get("meta", {}), "scss")
 
+    font_imports = generate_font_imports(data)
     lines = [header, ""]
+    if font_imports:
+        lines.append(font_imports)
+        lines.append("")
 
     # Group tokens by section for maps
     section_tokens = {}

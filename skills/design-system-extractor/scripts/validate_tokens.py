@@ -24,7 +24,8 @@ PX_RE = re.compile(r"^-?\d+(\.\d+)?px$")
 EM_RE = re.compile(r"^-?\d+(\.\d+)?em$")
 SHADOW_RE = re.compile(r"^(\d+\s+){2,3}\d+px\s+rgba\(.+\)$|^none$")
 TOKEN_REF_RE = re.compile(r"\{[\w.-]+\}")
-VALID_TYPES = {"color", "dimension", "fontFamily", "fontWeight", "number", "shadow"}
+URL_RE = re.compile(r"^https?://.+$")
+VALID_TYPES = {"color", "dimension", "fontFamily", "fontWeight", "fontSource", "number", "shadow"}
 
 
 def validate(data: dict) -> list[str]:
@@ -72,6 +73,20 @@ def validate(data: dict) -> list[str]:
                         errors.append(f"typography.font-weight.{name}: value '{token['value']}' should be 100-900 in increments of 100")
                 except ValueError:
                     errors.append(f"typography.font-weight.{name}: value '{token['value']}' should be numeric")
+
+    if "font-source" in typo:
+        for name, token in typo["font-source"].items():
+            if not isinstance(token, dict):
+                errors.append(f"typography.font-source.{name}: expected object, got {type(token).__name__}")
+                continue
+            if "value" not in token:
+                errors.append(f"typography.font-source.{name}: missing 'value'")
+            elif token["value"] != "system" and not URL_RE.match(token["value"]):
+                errors.append(f"typography.font-source.{name}: value must be a valid URL or 'system'")
+            if "type" not in token:
+                errors.append(f"typography.font-source.{name}: missing 'type'")
+            elif token["type"] != "fontSource":
+                errors.append(f"typography.font-source.{name}: type should be 'fontSource', got '{token['type']}'")
 
     # Validate spacing
     spacing = data.get("spacing", {})

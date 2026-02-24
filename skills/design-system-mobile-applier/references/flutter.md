@@ -220,12 +220,13 @@ class AppTheme {
 
 Same as Android Compose — see `android-compose.md` for the full color scheme and typography mapping tables.
 
-## Integration Guidance
+## Font Registration
 
-After generating `app_theme.dart`:
+When `typography.font-source` tokens are present in the design token JSON, use them to set up custom fonts:
 
-1. Place in `lib/theme/`
-2. Register custom fonts in `pubspec.yaml`:
+1. **Download font files** — Use the `font-source` URL (e.g., Google Fonts) to download the `.ttf` files for each font family. Extract the individual weight files (Regular, Medium, SemiBold, Bold).
+2. **Place in assets** — Add font files to `assets/fonts/` in your project.
+3. **Register in pubspec.yaml** — Declare each font family and its weight variants:
    ```yaml
    fonts:
      - family: Inter
@@ -238,6 +239,14 @@ After generating `app_theme.dart`:
          - asset: assets/fonts/Inter-Bold.ttf
            weight: 700
    ```
+4. **System fonts** — If the `font-source` value is `"system"`, no font files or `pubspec.yaml` registration is needed.
+
+## Integration Guidance
+
+After generating `app_theme.dart`:
+
+1. Place in `lib/theme/`
+2. Register custom fonts using the font source URLs (see Font Registration above)
 3. Apply in `MaterialApp`:
    ```dart
    MaterialApp(

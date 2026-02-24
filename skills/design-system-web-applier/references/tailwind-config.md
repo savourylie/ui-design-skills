@@ -233,6 +233,31 @@ If the token JSON includes a `components` section, map each component to Tailwin
 
 Resolve `{token.path}` references to the corresponding Tailwind utility class. For state properties (`hover-*`, `focus-*`, `active-*`, `placeholder-*`), use Tailwind's variant prefix syntax.
 
+## Font Loading
+
+Tailwind config defines font family names but doesn't load the font files. You must add font imports to your global CSS file (e.g., `src/globals.css` or `src/app.css`):
+
+```css
+/* Global CSS — load fonts before Tailwind directives */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+Alternatively, use `<link>` tags in your HTML `<head>`:
+
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+```
+
+The font URLs come from the `typography.font-source` tokens. Skip any entry with value `"system"` — system fonts don't need imports.
+
 ## Key Principles
 
 - Always use `theme.extend` (not `theme`) to preserve Tailwind's built-in defaults

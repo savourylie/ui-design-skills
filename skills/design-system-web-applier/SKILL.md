@@ -23,8 +23,9 @@ Convert design token JSON into production-ready theme files for any web stack.
 1. **Receive tokens** — accept a JSON file path, a Markdown file with a JSON code block, or inline JSON pasted in chat
 2. **Detect or ask for stack** — inspect the project for indicators (see Stack Detection below); if ambiguous, ask the user
 3. **Read the appropriate reference** — load the reference file for the target stack
-4. **Generate output** — run `scripts/generate_css.py` for CSS/SCSS; follow the reference guide templates for Tailwind/React/Vue
-5. **Write files + provide integration guidance** — place output files in the project and explain how to wire them in
+4. **Generate font imports** — extract `typography.font-source` URLs and emit `@import url(...)` declarations (skip entries with value `"system"`)
+5. **Generate output** — run `scripts/generate_css.py` for CSS/SCSS; follow the reference guide templates for Tailwind/React/Vue
+6. **Write files + provide integration guidance** — place output files in the project and explain how to wire them in (including font loading for Tailwind/React/Vue stacks)
 
 ## Stack Detection
 
@@ -67,6 +68,7 @@ Divide by 16: `4px` → `0.25rem`, `16px` → `1rem`, `32px` → `2rem`.
 These token types are not converted:
 - Colors (`#2563EB`)
 - Font families (`'Inter', sans-serif`)
+- Font sources (URLs or `"system"`)
 - Font weights (`600`)
 - Line heights (`1.5`)
 - Shadows (full CSS shadow syntax)

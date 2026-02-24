@@ -180,6 +180,17 @@ def collect_radii(data: dict) -> list[tuple[str, str]]:
     return radii
 
 
+def collect_font_sources(data: dict) -> list[tuple[str, str]]:
+    """Collect (shortName, sourceURL) pairs from typography.font-source section."""
+    sources = []
+    fs = data.get("typography", {}).get("font-source", {})
+    for key in ["heading", "body", "mono"]:
+        val = fs.get(key)
+        if val and isinstance(val, dict) and "value" in val:
+            sources.append((key, val["value"]))
+    return sources
+
+
 def collect_shadows(data: dict) -> list[tuple[str, dict]]:
     """Collect (name, parsed_shadow) pairs from shadow section."""
     shadows = []
@@ -241,11 +252,26 @@ def generate_compose_type(data: dict) -> str:
     sizes = collect_font_sizes(data)
     weights = collect_font_weights(data)
     line_heights = collect_line_heights(data)
+    font_sources = collect_font_sources(data)
+
+    # Build source lookup
+    source_map = {name: url for name, url in font_sources}
 
     # Font families
     for short, font_name in families:
         pascal = short.capitalize()
-        lines.append(f"val {pascal}FontFamily = FontFamily.Default // Replace with actual font resource")
+        source_url = source_map.get(short)
+        if source_url and source_url != "system":
+            font_res = font_name.lower().replace(" ", "_")
+            lines.append(f"// Source: {source_url}")
+            lines.append(f"// Download font files and place in res/font/ (e.g., {font_res}_regular.ttf)")
+            lines.append(f"// Then replace FontFamily.Default with:")
+            lines.append(f"//   FontFamily(Font(R.font.{font_res}_regular, FontWeight.Normal), ...)")
+            lines.append(f"val {pascal}FontFamily = FontFamily.Default")
+        elif source_url == "system":
+            lines.append(f"val {pascal}FontFamily = FontFamily.Default // System font — no setup needed")
+        else:
+            lines.append(f"val {pascal}FontFamily = FontFamily.Default // Replace with actual font resource")
 
     lines.append("")
 
@@ -483,6 +509,18 @@ def generate_xml_styles(data: dict) -> str:
     meta = data.get("meta", {})
     lines = [generate_xml_header(meta, "Android XML - Styles")]
     lines.append("<resources>")
+
+    # Font source comments
+    font_sources = collect_font_sources(data)
+    non_system = [(name, url) for name, url in font_sources if url != "system"]
+    if non_system:
+        lines.append("    <!-- Font Sources -->")
+        for name, url in non_system:
+            families_list = collect_font_families(data)
+            font_name = next((fn for s, fn in families_list if s == name), name)
+            lines.append(f"    <!-- {font_name}: {url} -->")
+            lines.append(f"    <!-- Download .ttf files and place in res/font/ -->")
+        lines.append("")
 
     # Text styles
     families = collect_font_families(data)

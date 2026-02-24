@@ -35,7 +35,7 @@ Use the Read tool to view each screenshot. If multiple screenshots are provided,
 Analyze in this order (read references/extraction-guide.md for detailed heuristics):
 
 1. **Colors** — sample every distinct color visible: backgrounds, text, borders, buttons, accents, status colors (error/warning/success/info)
-2. **Typography** — identify font families (or closest match), size scale, weights, line heights
+2. **Typography** — identify font families (or closest match), size scale, weights, line heights, and font sources (Google Fonts URLs or `"system"` for system fonts)
 3. **Spacing** — infer the spacing scale from padding, margins, gaps between elements
 4. **Border radii** — buttons, cards, inputs, avatars, badges
 5. **Shadows/elevation** — depth levels visible on cards, modals, dropdowns

@@ -240,12 +240,32 @@ python3 scripts/generate_swift.py tokens.json --swiftui --output Sources/Theme/
 python3 scripts/generate_swift.py tokens.json --swiftui
 ```
 
+## Font Registration
+
+When `typography.font-source` tokens are present in the design token JSON, use them to set up custom fonts:
+
+1. **Download font files** — Use the `font-source` URL (e.g., Google Fonts) to download the `.ttf` or `.otf` files for each font family. Extract the individual weight files (Regular, Medium, SemiBold, Bold).
+2. **Add to Xcode project** — Drag the font files into your Xcode project, ensuring "Copy items if needed" is checked and they are added to the correct target.
+3. **Register in Info.plist** — Add an `UIAppFonts` (or `Fonts provided by application`) array entry for each font file:
+   ```xml
+   <key>UIAppFonts</key>
+   <array>
+       <string>Inter-Regular.ttf</string>
+       <string>Inter-Medium.ttf</string>
+       <string>Inter-SemiBold.ttf</string>
+       <string>Inter-Bold.ttf</string>
+   </array>
+   ```
+4. **System fonts** — If the `font-source` value is `"system"`, no registration is needed. The generated code will use `.system()` fonts automatically.
+
+The generated `DesignTokens.swift` includes a `// MARK: - Font Registration` comment block listing each non-system font and its source URL for reference.
+
 ## Integration Guidance
 
 After generating `DesignTokens.swift`:
 
 1. Add the file to your Xcode project / Swift Package
-2. If using custom fonts, register them in `Info.plist` under `UIAppFontNames` / `ATSApplicationFontsPath`
+2. Register custom fonts using the font source URLs (see Font Registration above)
 3. Use token structs directly: `DSColors.primary`, `DSSpacing.space4`, etc.
 4. Apply shadows with the ViewModifier: `.dsShadow(.md)`
 5. Create custom `ButtonStyle` / `ViewModifier` types using the token constants for component patterns
