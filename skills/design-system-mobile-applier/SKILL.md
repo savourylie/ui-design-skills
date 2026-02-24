@@ -19,7 +19,8 @@ Convert design token JSON into native mobile theme files for iOS, Android, Flutt
 2. **Detect or ask for platform** — inspect the project for indicators (see Platform Detection below); if ambiguous, ask the user
 3. **Read the appropriate reference** — load the reference file for the target platform
 4. **Generate output** — run `scripts/generate_swift.py` for iOS, `scripts/generate_kotlin.py` for Android; follow reference templates for Flutter/React Native
-5. **Write files + provide integration guidance** — place output files in the project and explain how to wire them in
+5. **Generate font setup guidance** — if `typography.font-source` tokens are present, include platform-specific instructions for downloading and registering non-system fonts (see each platform reference for details)
+6. **Write files + provide integration guidance** — place output files in the project and explain how to wire them in
 
 ## Platform Detection
 
@@ -85,6 +86,7 @@ Validate the JSON has the required sections (`meta`, `color`, `typography`, `spa
 These token types are not unit-converted:
 - Colors (hex strings)
 - Font families (name strings)
+- Font sources (URL strings or `"system"`)
 - Font weights (numeric)
 - Line heights (unitless ratios)
 

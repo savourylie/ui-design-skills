@@ -181,12 +181,32 @@ python3 scripts/generate_swift.py tokens.json --uikit --output Sources/Theme/
 python3 scripts/generate_swift.py tokens.json --swiftui --uikit --output Sources/Theme/
 ```
 
+## Font Registration
+
+When `typography.font-source` tokens are present in the design token JSON, use them to set up custom fonts:
+
+1. **Download font files** — Use the `font-source` URL (e.g., Google Fonts) to download the `.ttf` or `.otf` files for each font family. Extract the individual weight files (Regular, Medium, SemiBold, Bold).
+2. **Add to Xcode project** — Drag the font files into your Xcode project, ensuring "Copy items if needed" is checked and they are added to the correct target.
+3. **Register in Info.plist** — Add an `UIAppFonts` (or `Fonts provided by application`) array entry for each font file:
+   ```xml
+   <key>UIAppFonts</key>
+   <array>
+       <string>Inter-Regular.ttf</string>
+       <string>Inter-Medium.ttf</string>
+       <string>Inter-SemiBold.ttf</string>
+       <string>Inter-Bold.ttf</string>
+   </array>
+   ```
+4. **System fonts** — If the `font-source` value is `"system"`, no registration is needed. The generated convenience methods will fall back to `UIFont.systemFont(ofSize:weight:)` automatically.
+
+The generated `Theme.swift` includes a `// MARK: - Font Registration` comment block listing each non-system font and its source URL for reference.
+
 ## Integration Guidance
 
 After generating `Theme.swift`:
 
 1. Add the file to your Xcode project
-2. Register custom fonts in `Info.plist` under `UIAppFontNames`
+2. Register custom fonts using the font source URLs (see Font Registration above)
 3. Use `Theme.Colors.primary`, `Theme.Fonts.heading(...)`, etc. throughout your views
 4. For shadows, apply `CALayer` shadow properties using the token values
 5. Consider creating `UIView` subclasses for common component patterns (cards, buttons)

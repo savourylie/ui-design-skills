@@ -216,6 +216,24 @@ python3 scripts/generate_kotlin.py tokens.json --xml --output app/src/main/res/v
 python3 scripts/generate_kotlin.py tokens.json --xml
 ```
 
+## Font Setup
+
+When `typography.font-source` tokens are present in the design token JSON, use them to set up custom fonts:
+
+1. **Download font files** — Use the `font-source` URL (e.g., Google Fonts) to download the `.ttf` files for each font family.
+2. **Place in resources** — Add font files to `app/src/main/res/font/` (create the directory if needed). Use lowercase snake_case names (e.g., `inter_regular.ttf`, `inter_bold.ttf`).
+3. **Reference in styles** — Add `android:fontFamily` to text appearance styles:
+   ```xml
+   <style name="TextAppearance.Heading.Large" parent="TextAppearance.Material3.BodyMedium">
+       <item name="android:fontFamily">@font/inter_bold</item>
+       <item name="android:textSize">30sp</item>
+       <item name="android:textStyle">bold</item>
+   </style>
+   ```
+4. **System fonts** — If the `font-source` value is `"system"`, no font files are needed. Omit the `android:fontFamily` attribute to use the system default.
+
+The generated `styles.xml` includes XML comments with the font source URL for each font family.
+
 ## Integration Guidance
 
 After generating XML resource files:
@@ -229,4 +247,4 @@ After generating XML resource files:
 4. Reference dimensions: `@dimen/space_4`, `R.dimen.space_4`
 5. Apply text styles: `android:textAppearance="@style/TextAppearance.Heading.Large"`
 6. Apply button style: `style="@style/Widget.App.Button.Primary"`
-7. For custom fonts, add font files to `res/font/` and reference them in styles
+7. Set up custom fonts using the font source URLs (see Font Setup above)

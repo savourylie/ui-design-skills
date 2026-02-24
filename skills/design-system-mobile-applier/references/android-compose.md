@@ -280,13 +280,13 @@ python3 scripts/generate_kotlin.py tokens.json --compose --output app/src/main/j
 python3 scripts/generate_kotlin.py tokens.json --compose
 ```
 
-## Integration Guidance
+## Font Setup
 
-After generating the Compose theme files:
+When `typography.font-source` tokens are present in the design token JSON, use them to set up custom fonts:
 
-1. Place files in your theme package (e.g., `com.example.theme`)
-2. Update `package` declarations if needed
-3. Replace `FontFamily.Default` with actual font resources:
+1. **Download font files** — Use the `font-source` URL (e.g., Google Fonts) to download the `.ttf` files for each font family.
+2. **Place in resources** — Add font files to `app/src/main/res/font/` (create the directory if needed). Use lowercase snake_case names (e.g., `inter_regular.ttf`, `inter_bold.ttf`).
+3. **Replace FontFamily.Default** — The generated `Type.kt` includes `FontFamily.Default` placeholders with comments showing the source URL. Replace them with actual font resources:
    ```kotlin
    val HeadingFontFamily = FontFamily(
        Font(R.font.inter_regular, FontWeight.Normal),
@@ -295,6 +295,15 @@ After generating the Compose theme files:
        Font(R.font.inter_bold, FontWeight.Bold)
    )
    ```
+4. **System fonts** — If the `font-source` value is `"system"`, no font files are needed. Keep `FontFamily.Default`.
+
+## Integration Guidance
+
+After generating the Compose theme files:
+
+1. Place files in your theme package (e.g., `com.example.theme`)
+2. Update `package` declarations if needed
+3. Set up custom fonts using the font source URLs (see Font Setup above)
 4. Wrap your app content with `AppTheme { ... }`
 5. Access theme values via `MaterialTheme.colorScheme`, `MaterialTheme.typography`, `MaterialTheme.shapes`
 6. Use `Dimens` object for spacing: `Modifier.padding(Dimens.space4)`

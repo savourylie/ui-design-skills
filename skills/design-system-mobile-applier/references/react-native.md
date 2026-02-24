@@ -293,6 +293,32 @@ export const textStyles = StyleSheet.create({
 });
 ```
 
+## Font Loading
+
+When `typography.font-source` tokens are present in the design token JSON, use them to set up custom fonts:
+
+### Expo Projects
+
+1. **Use `expo-google-fonts`** (recommended) — Install the package for each Google Font:
+   ```bash
+   npx expo install @expo-google-fonts/inter expo-font
+   ```
+   Then load in your app entry:
+   ```typescript
+   import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
+   ```
+2. **Or use `expo-font`** — Download `.ttf` files from the `font-source` URL, place in `assets/fonts/`, and load with `Font.loadAsync()`.
+
+### Bare React Native Projects
+
+1. **Download font files** — Use the `font-source` URL (e.g., Google Fonts) to download the `.ttf` files.
+2. **Place in assets** — Add files to `assets/fonts/`.
+3. **Link fonts** — Run `npx react-native-asset` to link the fonts to the native projects.
+
+### System Fonts
+
+If the `font-source` value is `"system"`, no font loading is needed. Remove the `fontFamily` property from styles to use the platform default.
+
 ## Integration Guidance
 
 After generating `theme.ts`:
@@ -302,9 +328,7 @@ After generating `theme.ts`:
    ```typescript
    import { theme } from '../theme/theme';
    ```
-3. For custom fonts, link them via:
-   - **Expo**: Add to `expo.fonts` in app config, or use `expo-font`
-   - **Bare RN**: Place in `assets/fonts/` and run `npx react-native-asset`
+3. Load custom fonts using the font source URLs (see Font Loading above)
 4. Consider creating a `ThemeProvider` with React Context for dynamic theming
 5. Use the spread operator for shadows: `...theme.shadows.md`
 6. React Native line heights are absolute values (not multipliers), so compute: `fontSize * lineHeightMultiplier`

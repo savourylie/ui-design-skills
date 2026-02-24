@@ -148,6 +148,17 @@ def collect_radii(data: dict) -> list[tuple[str, str]]:
     return radii
 
 
+def collect_font_sources(data: dict) -> list[tuple[str, str]]:
+    """Collect (shortName, sourceURL) pairs from typography.font-source section."""
+    sources = []
+    fs = data.get("typography", {}).get("font-source", {})
+    for key in ["heading", "body", "mono"]:
+        val = fs.get(key)
+        if val and isinstance(val, dict) and "value" in val:
+            sources.append((key, val["value"]))
+    return sources
+
+
 def collect_shadows(data: dict) -> list[tuple[str, dict]]:
     """Collect (swiftName, parsed_shadow) pairs from shadow section."""
     shadows = []
@@ -240,6 +251,27 @@ def generate_swiftui(data: dict) -> str:
         lines.append(f'        .custom("{font_name}", size: size).weight(weight)')
         lines.append("    }")
     lines.append("}\n")
+
+    # Font Registration
+    font_sources = collect_font_sources(data)
+    non_system = [(name, url) for name, url in font_sources if url != "system"]
+    if non_system:
+        lines.append("// MARK: - Font Registration\n")
+        lines.append("// To use custom fonts, download the font files and add them to your Xcode project.")
+        lines.append("// Register each font file in Info.plist under the \"UIAppFonts\" key.")
+        lines.append("//")
+        for name, url in non_system:
+            family_key = f"font-family-{name}"
+            family_name = next((fn for s, fn in families if s == name), name)
+            lines.append(f"// Font: {family_name}")
+            lines.append(f"//   Source: {url}")
+            lines.append(f"//   Add to Info.plist UIAppFonts: \"{family_name}-Regular.ttf\", \"{family_name}-Bold.ttf\", etc.")
+        system_fonts = [(name, url) for name, url in font_sources if url == "system"]
+        if system_fonts:
+            lines.append("//")
+            for name, _ in system_fonts:
+                lines.append(f"// Font: {name} — system font, no registration needed")
+        lines.append("")
 
     # Spacing
     spacings = collect_spacing(data)
@@ -365,6 +397,26 @@ def generate_uikit(data: dict) -> str:
         lines.append("            return UIFont.systemFont(ofSize: size, weight: weight)")
         lines.append("        }")
     lines.append("    }\n")
+
+    # Font Registration
+    font_sources = collect_font_sources(data)
+    non_system = [(name, url) for name, url in font_sources if url != "system"]
+    if non_system:
+        lines.append("    // MARK: Font Registration\n")
+        lines.append("    // To use custom fonts, download the font files and add them to your Xcode project.")
+        lines.append("    // Register each font file in Info.plist under the \"UIAppFonts\" key.")
+        lines.append("    //")
+        for name, url in non_system:
+            family_name = next((fn for s, fn in families if s == name), name)
+            lines.append(f"    // Font: {family_name}")
+            lines.append(f"    //   Source: {url}")
+            lines.append(f"    //   Add to Info.plist UIAppFonts: \"{family_name}-Regular.ttf\", \"{family_name}-Bold.ttf\", etc.")
+        system_fonts = [(name, url) for name, url in font_sources if url == "system"]
+        if system_fonts:
+            lines.append("    //")
+            for name, _ in system_fonts:
+                lines.append(f"    // Font: {name} — system font, no registration needed")
+        lines.append("")
 
     # Spacing
     spacings = collect_spacing(data)
