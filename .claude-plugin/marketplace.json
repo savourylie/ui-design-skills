@@ -16,7 +16,8 @@
       "skills": [
         "./skills/design-system-extractor",
         "./skills/design-system-web-applier",
-        "./skills/design-system-mobile-applier"
+        "./skills/design-system-mobile-applier",
+        "./skills/wcag-accessibility-checker"
       ]
     }
   ]
