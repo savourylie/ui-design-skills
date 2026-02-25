@@ -23,6 +23,11 @@
       "name": "wcag-accessibility-checker",
       "path": ".agent/skills/wcag-accessibility-checker",
       "description": "Audit React/Next.js apps for WCAG 2.2 accessibility compliance"
+    },
+    {
+      "name": "ux-design",
+      "path": ".agent/skills/ux-design",
+      "description": "Interactive UX design documentation generator that transforms a PRD into a UX_DESIGN.md through an 8-step guided process"
     }
   ]
 }
