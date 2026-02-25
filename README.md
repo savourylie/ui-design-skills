@@ -1,10 +1,10 @@
 # ui-design-skills
 
-Agent skills for UI design systems and web accessibility. Extract design tokens from screenshots, generate platform-native theme files, and audit React/Next.js apps for WCAG compliance. Works with [Claude Code](https://docs.anthropic.com/en/docs/claude-code/skills), [Codex CLI](https://github.com/openai/codex), and [Antigravity](https://github.com/ArcadeLabsInc/antigravity) via the open [Agent Skills](https://agentskills.io) standard.
+Agent skills for UI design systems, UX design, and web accessibility. Extract design tokens from screenshots, generate platform-native theme files, transform PRDs into UX design documentation, and audit React/Next.js apps for WCAG compliance. Works with [Claude Code](https://docs.anthropic.com/en/docs/claude-code/skills), [Codex CLI](https://github.com/openai/codex), and [Antigravity](https://github.com/ArcadeLabsInc/antigravity) via the open [Agent Skills](https://agentskills.io) standard.
 
 ## Overview
 
-This repository provides two categories of agent skills:
+This repository provides three categories of agent skills:
 
 **UI Design Skills** — a complete **extract → review → apply** workflow for design systems:
 
@@ -17,6 +17,12 @@ This repository provides two categories of agent skills:
 1. **Provide** your React/Next.js codebase or screenshots of your app
 2. **Audit** using static analysis + axe-core runtime testing following WCAG-EM methodology
 3. **Review** the structured Markdown conformance report organized by WCAG level and POUR principles
+
+**UX Design Skills** — interactive PRD-to-UX-design workflow:
+
+1. **Provide** a Product Requirements Document (PRD) as input
+2. **Walk through** an 8-step guided process covering user flows, sitemaps, wireframes, and more
+3. **Review** the assembled UX_DESIGN.md with ASCII wireframes and structured design artifacts
 
 All design skills share a common [token schema](#token-schema), so the extractor's output plugs directly into either applier.
 
@@ -36,6 +42,12 @@ All design skills share a common [token schema](#token-schema), so the extractor
 |-------|-------------|
 | **wcag-accessibility-checker** | Audits React/Next.js apps for WCAG 2.2 compliance using static code analysis + axe-core runtime testing. Follows the WCAG-EM methodology to produce a structured Markdown conformance report organized by WCAG level (A/AA/AAA) and the four POUR principles. |
 
+### UX Design Skills
+
+| Skill | Description |
+|-------|-------------|
+| **ux-design** | Interactive UX design documentation generator that transforms a PRD into a comprehensive UX_DESIGN.md through an 8-step guided process with ASCII wireframes, user flows, sitemaps, and content models. |
+
 ## Installation
 
 ### Claude Code
@@ -54,6 +66,7 @@ $skill-installer install https://github.com/savourylie/ui-design-skills/tree/mai
 $skill-installer install https://github.com/savourylie/ui-design-skills/tree/main/skills/design-system-web-applier
 $skill-installer install https://github.com/savourylie/ui-design-skills/tree/main/skills/design-system-mobile-applier
 $skill-installer install https://github.com/savourylie/ui-design-skills/tree/main/skills/wcag-accessibility-checker
+$skill-installer install https://github.com/savourylie/ui-design-skills/tree/main/skills/ux-design
 ```
 
 Restart Codex after installing to pick up the new skills.
@@ -75,7 +88,7 @@ Install skills directly from GitHub (no cloning required):
 curl -sL https://github.com/savourylie/ui-design-skills/archive/refs/heads/main.tar.gz \
   | tar xz --strip-components=1 -C /tmp ui-design-skills-main/skills
 mkdir -p .agent/skills
-for s in design-system-extractor design-system-web-applier design-system-mobile-applier wcag-accessibility-checker; do
+for s in design-system-extractor design-system-web-applier design-system-mobile-applier wcag-accessibility-checker ux-design; do
   cp -r /tmp/skills/$s .agent/skills/
 done
 rm -rf /tmp/skills
@@ -87,7 +100,7 @@ Or for global installation (available across all projects):
 curl -sL https://github.com/savourylie/ui-design-skills/archive/refs/heads/main.tar.gz \
   | tar xz --strip-components=1 -C /tmp ui-design-skills-main/skills
 mkdir -p ~/.gemini/antigravity/skills
-for s in design-system-extractor design-system-web-applier design-system-mobile-applier wcag-accessibility-checker; do
+for s in design-system-extractor design-system-web-applier design-system-mobile-applier wcag-accessibility-checker ux-design; do
   cp -r /tmp/skills/$s ~/.gemini/antigravity/skills/
 done
 rm -rf /tmp/skills
@@ -160,13 +173,15 @@ ui-design-skills/
 │       ├── design-system-extractor      -> ../../skills/design-system-extractor
 │       ├── design-system-web-applier    -> ../../skills/design-system-web-applier
 │       ├── design-system-mobile-applier -> ../../skills/design-system-mobile-applier
-│       └── wcag-accessibility-checker   -> ../../skills/wcag-accessibility-checker
+│       ├── wcag-accessibility-checker   -> ../../skills/wcag-accessibility-checker
+│       └── ux-design                    -> ../../skills/ux-design
 ├── .agent/
 │   └── skills/                          # Antigravity discovery (symlinks)
 │       ├── design-system-extractor      -> ../../skills/design-system-extractor
 │       ├── design-system-web-applier    -> ../../skills/design-system-web-applier
 │       ├── design-system-mobile-applier -> ../../skills/design-system-mobile-applier
-│       └── wcag-accessibility-checker   -> ../../skills/wcag-accessibility-checker
+│       ├── wcag-accessibility-checker   -> ../../skills/wcag-accessibility-checker
+│       └── ux-design                    -> ../../skills/ux-design
 ├── catalog.json                         # Antigravity skill catalog
 ├── skills/                              # Canonical skill definitions
 │   ├── design-system-extractor/
@@ -181,9 +196,12 @@ ui-design-skills/
 │   │   ├── SKILL.md
 │   │   ├── scripts/
 │   │   └── references/
-│   └── wcag-accessibility-checker/
+│   ├── wcag-accessibility-checker/
+│   │   ├── SKILL.md
+│   │   ├── scripts/
+│   │   └── references/
+│   └── ux-design/
 │       ├── SKILL.md
-│       ├── scripts/
 │       └── references/
 ├── README.md
 └── LICENSE
