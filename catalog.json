@@ -18,6 +18,11 @@
       "name": "design-system-mobile-applier",
       "path": ".agent/skills/design-system-mobile-applier",
       "description": "Generate mobile theme files from design token JSON"
+    },
+    {
+      "name": "wcag-accessibility-checker",
+      "path": ".agent/skills/wcag-accessibility-checker",
+      "description": "Audit React/Next.js apps for WCAG 2.2 accessibility compliance"
     }
   ]
 }

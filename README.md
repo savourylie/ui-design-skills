@@ -1,24 +1,40 @@
-# design-system-skills
+# ui-design-skills
 
-Multi-platform agent skills that extract design systems from UI screenshots and generate platform-native theme files for web and mobile. Works with [Claude Code](https://docs.anthropic.com/en/docs/claude-code/skills), [Codex CLI](https://github.com/openai/codex), and [Antigravity](https://github.com/ArcadeLabsInc/antigravity) via the open [Agent Skills](https://agentskills.io) standard.
+Agent skills for UI design systems and web accessibility. Extract design tokens from screenshots, generate platform-native theme files, and audit React/Next.js apps for WCAG compliance. Works with [Claude Code](https://docs.anthropic.com/en/docs/claude-code/skills), [Codex CLI](https://github.com/openai/codex), and [Antigravity](https://github.com/ArcadeLabsInc/antigravity) via the open [Agent Skills](https://agentskills.io) standard.
 
 ## Overview
 
-This repository provides three agent skills that form a complete **extract → review → apply** workflow for design systems:
+This repository provides two categories of agent skills:
+
+**UI Design Skills** — a complete **extract → review → apply** workflow for design systems:
 
 1. **Extract** design tokens (colors, typography, spacing, shadows) from one or more UI screenshots
 2. **Review** the generated token JSON — a structured, platform-agnostic artifact
 3. **Apply** tokens to your target stack, producing production-ready theme files for web or mobile
 
-All three skills share a common [token schema](#token-schema), so the extractor's output plugs directly into either applier.
+**Accessibility Skills** — automated WCAG compliance auditing:
+
+1. **Provide** your React/Next.js codebase or screenshots of your app
+2. **Audit** using static analysis + axe-core runtime testing following WCAG-EM methodology
+3. **Review** the structured Markdown conformance report organized by WCAG level and POUR principles
+
+All design skills share a common [token schema](#token-schema), so the extractor's output plugs directly into either applier.
 
 ## Skills
+
+### UI Design Skills
 
 | Skill | Description |
 |-------|-------------|
 | **design-system-extractor** | Analyzes UI screenshots to reverse-engineer design tokens (colors, typography, spacing, border radii, shadows, component patterns) into a structured Markdown + JSON artifact. |
 | **design-system-web-applier** | Converts design token JSON into web theme files — CSS custom properties, SCSS variables, Tailwind config, React themes (styled-components / Emotion / Chakra UI), CSS Modules + TypeScript, or Vue 3 composables. |
 | **design-system-mobile-applier** | Converts design token JSON into native mobile theme files — iOS (SwiftUI / UIKit), Android (Jetpack Compose / XML resources), Flutter (ThemeData), or React Native (theme.ts). |
+
+### Accessibility Skills
+
+| Skill | Description |
+|-------|-------------|
+| **wcag-accessibility-checker** | Audits React/Next.js apps for WCAG 2.2 compliance using static code analysis + axe-core runtime testing. Follows the WCAG-EM methodology to produce a structured Markdown conformance report organized by WCAG level (A/AA/AAA) and the four POUR principles. |
 
 ## Installation
 
@@ -37,6 +53,7 @@ Install skills directly from GitHub using `$skill-installer` inside Codex (no cl
 $skill-installer install https://github.com/savourylie/ui-design-skills/tree/main/skills/design-system-extractor
 $skill-installer install https://github.com/savourylie/ui-design-skills/tree/main/skills/design-system-web-applier
 $skill-installer install https://github.com/savourylie/ui-design-skills/tree/main/skills/design-system-mobile-applier
+$skill-installer install https://github.com/savourylie/ui-design-skills/tree/main/skills/wcag-accessibility-checker
 ```
 
 Restart Codex after installing to pick up the new skills.
@@ -58,7 +75,7 @@ Install skills directly from GitHub (no cloning required):
 curl -sL https://github.com/savourylie/ui-design-skills/archive/refs/heads/main.tar.gz \
   | tar xz --strip-components=1 -C /tmp ui-design-skills-main/skills
 mkdir -p .agent/skills
-for s in design-system-extractor design-system-web-applier design-system-mobile-applier; do
+for s in design-system-extractor design-system-web-applier design-system-mobile-applier wcag-accessibility-checker; do
   cp -r /tmp/skills/$s .agent/skills/
 done
 rm -rf /tmp/skills
@@ -70,7 +87,7 @@ Or for global installation (available across all projects):
 curl -sL https://github.com/savourylie/ui-design-skills/archive/refs/heads/main.tar.gz \
   | tar xz --strip-components=1 -C /tmp ui-design-skills-main/skills
 mkdir -p ~/.gemini/antigravity/skills
-for s in design-system-extractor design-system-web-applier design-system-mobile-applier; do
+for s in design-system-extractor design-system-web-applier design-system-mobile-applier wcag-accessibility-checker; do
   cp -r /tmp/skills/$s ~/.gemini/antigravity/skills/
 done
 rm -rf /tmp/skills
@@ -84,17 +101,33 @@ git clone https://github.com/savourylie/ui-design-skills.git .ui-design-skills
 
 ## Usage / Workflow
 
-### 1. Extract tokens from screenshots
+### Design System: Extract → Review → Apply
+
+#### 1. Extract tokens from screenshots
 
 Provide one or more UI screenshots and invoke the **design-system-extractor** skill. It will analyze the visuals and produce a Markdown file with human-readable tables and a machine-readable JSON block.
 
-### 2. Review the token artifact
+#### 2. Review the token artifact
 
 Inspect the generated Markdown. Each token includes its value, usage context, and a confidence annotation. Edit any values that need adjustment before applying.
 
-### 3. Apply tokens to your target stack
+#### 3. Apply tokens to your target stack
 
 Pass the token JSON to the **web applier** or **mobile applier**. The skill auto-detects your project's stack (e.g., Tailwind, SwiftUI, Compose) and generates the appropriate theme files, or you can specify the target explicitly.
+
+### Accessibility Audit
+
+#### 1. Provide your app for auditing
+
+Point the **wcag-accessibility-checker** skill at your React/Next.js codebase or provide screenshots of the pages to audit.
+
+#### 2. Run the audit
+
+The skill performs static code analysis of your JSX/TSX components and optionally runs axe-core runtime tests. It follows the WCAG-EM evaluation methodology, covering all four POUR principles (Perceivable, Operable, Understandable, Robust).
+
+#### 3. Review the conformance report
+
+The skill generates a structured Markdown report organized by WCAG level (A/AA/AAA). Each finding includes the relevant success criterion, severity, affected component, and remediation guidance.
 
 ## Supported Platforms
 
@@ -126,12 +159,14 @@ ui-design-skills/
 │   └── skills/                          # Codex CLI discovery (symlinks)
 │       ├── design-system-extractor      -> ../../skills/design-system-extractor
 │       ├── design-system-web-applier    -> ../../skills/design-system-web-applier
-│       └── design-system-mobile-applier -> ../../skills/design-system-mobile-applier
+│       ├── design-system-mobile-applier -> ../../skills/design-system-mobile-applier
+│       └── wcag-accessibility-checker   -> ../../skills/wcag-accessibility-checker
 ├── .agent/
 │   └── skills/                          # Antigravity discovery (symlinks)
 │       ├── design-system-extractor      -> ../../skills/design-system-extractor
 │       ├── design-system-web-applier    -> ../../skills/design-system-web-applier
-│       └── design-system-mobile-applier -> ../../skills/design-system-mobile-applier
+│       ├── design-system-mobile-applier -> ../../skills/design-system-mobile-applier
+│       └── wcag-accessibility-checker   -> ../../skills/wcag-accessibility-checker
 ├── catalog.json                         # Antigravity skill catalog
 ├── skills/                              # Canonical skill definitions
 │   ├── design-system-extractor/
@@ -142,7 +177,11 @@ ui-design-skills/
 │   │   ├── SKILL.md
 │   │   ├── scripts/
 │   │   └── references/
-│   └── design-system-mobile-applier/
+│   ├── design-system-mobile-applier/
+│   │   ├── SKILL.md
+│   │   ├── scripts/
+│   │   └── references/
+│   └── wcag-accessibility-checker/
 │       ├── SKILL.md
 │       ├── scripts/
 │       └── references/
@@ -152,7 +191,7 @@ ui-design-skills/
 
 ## Token Schema
 
-All three skills share a common JSON token format inspired by the W3C Design Tokens Community Group spec. The top-level structure:
+All three design skills share a common JSON token format inspired by the W3C Design Tokens Community Group spec. The top-level structure:
 
 ```json
 {
